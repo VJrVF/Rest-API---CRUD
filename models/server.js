@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const morgan = require('morgan');
+const { dbConnection } = require('../database/config');
 
 class Server {
 
@@ -8,11 +10,19 @@ class Server {
         this.port = process.env.PORT;
         this.usuariosPath = '/api/usuarios';
 
+        // Conectar a base de datos
+
+        this.conectarDB();
+
         // Middlewares
         this.middlewares();
 
         // Rutas de mi aplicación
         this.routes();
+    }
+
+    async conectarDB() {
+        await dbConnection();
     }
 
     middlewares() {
@@ -25,6 +35,9 @@ class Server {
         
         // Directorio publico        
         this.app.use( express.static('public') );
+
+        // Morgan
+        this.app.use(morgan(':method :status :url'));
     }
 
     routes() {
